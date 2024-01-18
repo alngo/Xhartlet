@@ -3,10 +3,10 @@
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
 
-use super::{symbol::Symbol, user_account::UserAccount};
+use super::{account::Account, symbol::Symbol};
 
 pub struct Trade {
-    account: UserAccount,
+    account: Account,
     symbol: Symbol,
     quantity: u32,
     price: Decimal,

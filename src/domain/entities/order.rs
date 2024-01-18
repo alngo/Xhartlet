@@ -1,26 +1,13 @@
 use rust_decimal::Decimal;
 
-use super::{symbol::Symbol, user_account::UserAccount, Error, Result};
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-enum OrderKind {
-    Market,
-    Limit,
-    Stop,
-}
-
-#[derive(Debug, Clone, Eq, PartialEq)]
-enum OrderStatus {
-    New,
-    Filled,
-    Cancelled,
-    Rejected,
-    Expired,
-}
+use super::{
+    account::Account, order_kind::OrderKind, order_status::OrderStatus, symbol::Symbol, Error,
+    Result,
+};
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Order {
-    account: UserAccount,
+    account: Account,
     symbol: Symbol,
     quantity: Decimal,
     price: Decimal,
@@ -30,7 +17,7 @@ pub struct Order {
 
 impl Order {
     pub fn new(
-        account: UserAccount,
+        account: Account,
         symbol: Symbol,
         quantity: Decimal,
         price: Decimal,
@@ -58,15 +45,12 @@ impl Order {
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::entities::user::User;
-
     use super::*;
     use rust_decimal_macros::dec;
 
     #[test]
     fn test_new_order() {
-        let user = User::new("John".to_string()).unwrap();
-        let account = UserAccount::new(user, dec!(1000.0)).unwrap();
+        let account = Account::new("John".to_string(), dec!(1000.0)).unwrap();
         let order = Order::new(
             account,
             Symbol::EURUSD,
@@ -79,8 +63,7 @@ mod tests {
 
     #[test]
     fn test_new_order_zero_quantity() {
-        let user = User::new("John".to_string()).unwrap();
-        let account = UserAccount::new(user, dec!(1000.0)).unwrap();
+        let account = Account::new("John".to_string(), dec!(1000.0)).unwrap();
         let order = Order::new(
             account,
             Symbol::EURUSD,
@@ -94,8 +77,7 @@ mod tests {
 
     #[test]
     fn test_new_order_zero_price() {
-        let user = User::new("John".to_string()).unwrap();
-        let account = UserAccount::new(user, dec!(1000.0)).unwrap();
+        let account = Account::new("John".to_string(), dec!(1000.0)).unwrap();
         let order = Order::new(
             account,
             Symbol::EURUSD,
@@ -109,8 +91,7 @@ mod tests {
 
     #[test]
     fn test_new_order_invalid_order() {
-        let user = User::new("John".to_string()).unwrap();
-        let account = UserAccount::new(user, dec!(1000.0)).unwrap();
+        let account = Account::new("John".to_string(), dec!(1000.0)).unwrap();
         let order = Order::new(
             account,
             Symbol::EURUSD,
