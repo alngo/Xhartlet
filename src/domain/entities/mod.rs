@@ -14,7 +14,7 @@ enum Error {
     InvalidNameLength,
     InvalidQuantity(Decimal),
     InvalidPrice(Decimal),
-    InvalidOrder(Decimal, Decimal),
+    InvalidBalance(Decimal, Decimal),
 }
 
 impl fmt::Display for Error {
@@ -24,10 +24,10 @@ impl fmt::Display for Error {
             Error::InvalidNameLength => write!(f, "User name cannot be longer than 50 characters"),
             Error::InvalidQuantity(quantity) => write!(f, "Invalid quantity: {}", quantity),
             Error::InvalidPrice(price) => write!(f, "Invalid price: {}", price),
-            Error::InvalidOrder(order_price, balance) => write!(
+            Error::InvalidBalance(price, balance) => write!(
                 f,
-                "Invalid order: order price {} is greater than balance {}",
-                order_price, balance
+                "Invalid balance: price {} is greater than balance {}",
+                price, balance
             ),
         }
     }

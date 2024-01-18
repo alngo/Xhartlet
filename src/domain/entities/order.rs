@@ -26,11 +26,11 @@ impl Order {
         if quantity <= Decimal::ZERO {
             return Err(Error::InvalidQuantity(quantity));
         }
-        if price == Decimal::ZERO {
+        if price <= Decimal::ZERO {
             return Err(Error::InvalidPrice(price));
         }
         if price * quantity > *account.balance() {
-            return Err(Error::InvalidOrder(price * quantity, *account.balance()));
+            return Err(Error::InvalidBalance(price * quantity, *account.balance()));
         }
         Ok(Self {
             account,
@@ -102,7 +102,7 @@ mod tests {
         .unwrap_err();
         assert_eq!(
             order,
-            Error::InvalidOrder(dec!(1000.0) * dec!(100), dec!(1000.0))
+            Error::InvalidBalance(dec!(1000.0) * dec!(100), dec!(1000.0))
         );
     }
 }
