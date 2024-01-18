@@ -1,5 +1,5 @@
-mod utils;
 mod domain;
+mod utils;
 
 use wasm_bindgen::prelude::*;
 
