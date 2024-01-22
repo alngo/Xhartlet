@@ -16,7 +16,7 @@
 
 ### Entity
 
-- [ ] User
+- [x] User
 - [ ] Account
 - [ ] Position
 - [ ] Order
