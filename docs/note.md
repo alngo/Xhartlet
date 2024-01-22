@@ -4,19 +4,24 @@
 
 ### ValueObject
 
-- Price
-- Quantity
-- Ticker
-- Timeframe
+- [x] Id,
+- [x] Price
+- [x] Quantity
+- [x] Ticker
+- [x] Timeframe
+
+- [x] Direction
+- [x] Order Kind
+- [x] Order Status
 
 ### Entity
 
-- User
-- Account
-- Position
-- Order
-- Instrument
-- Candle
+- [ ] User
+- [ ] Account
+- [ ] Position
+- [ ] Order
+- [ ] Instrument
+- [ ] Candle
 
 ### Aggregate
 
