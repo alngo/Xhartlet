@@ -1,14 +1,30 @@
+use std::ops::Mul;
+
+use rust_decimal::Decimal;
+
+use super::price::Price;
+
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct Quantity {
-    value: i32,
+pub struct Quantity(pub i32);
+
+impl Mul<Price> for Quantity {
+    type Output = Price;
+    fn mul(self, rhs: Price) -> Self::Output {
+        Price(rhs.0 * Decimal::from(self.0))
+    }
 }
 
-impl Quantity {
-    pub fn new(value: i32) -> Self {
-        Self { value }
-    }
+#[cfg(test)]
+mod tests {
+    use rust_decimal_macros::dec;
 
-    pub fn value(&self) -> i32 {
-        self.value
+    use super::*;
+
+    #[test]
+    fn test_quantity_mul_price() {
+        let quantity = Quantity(2);
+        let price = Price(dec!(21.21));
+        let expected = Price(dec!(42.42));
+        assert_eq!(quantity * price, expected);
     }
 }
