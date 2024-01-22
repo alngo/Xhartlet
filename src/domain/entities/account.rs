@@ -1,4 +1,5 @@
-use super::{id::Id, Error, Result};
+use super::common::{Error, Result};
+use super::value_objects::id::Id;
 use rust_decimal::Decimal;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
