@@ -1,6 +1,7 @@
 use rust_decimal::Decimal;
 
 use super::common::{Error, Result};
+use super::position::Position;
 use super::value_objects::order::{Kind, Status};
 use super::value_objects::{id::Id, price::Price, quantity::Quantity, ticker::Ticker};
 
@@ -51,6 +52,15 @@ impl Order {
         if self.status == Status::PENDING {
             self.status = Status::CANCELLED;
             Ok(())
+        } else {
+            Err(Error::OrderNotPending(self.id.clone()))
+        }
+    }
+
+    pub fn fill(&mut self) -> Result<Position> {
+        if self.status == Status::PENDING {
+            self.status = Status::FILLED;
+            Ok(Position) 
         } else {
             Err(Error::OrderNotPending(self.id.clone()))
         }
