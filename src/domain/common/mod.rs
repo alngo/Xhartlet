@@ -2,6 +2,8 @@ use core::fmt;
 
 use rust_decimal::Decimal;
 
+use super::value_objects::{id::Id, price::Price, quantity::Quantity};
+
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -9,6 +11,9 @@ pub enum Error {
     InvalidEmptyName,
     InvalidNameLength(usize, usize),
     InvalidBalance(Decimal),
+    InvalidQuantity(Quantity),
+    InvalidPrice(Price),
+    OrderNotPending(Id),
 }
 
 impl fmt::Display for Error {
@@ -19,6 +24,9 @@ impl fmt::Display for Error {
                 write!(f, "Invalid name length: {}, max: {}", len, max)
             }
             Error::InvalidBalance(balance) => write!(f, "Invalid Balance {}", balance),
+            Error::InvalidQuantity(quantity) => write!(f, "Invalid Quantity {}", quantity),
+            Error::InvalidPrice(price) => write!(f, "Invalid Price {}", price),
+            Error::OrderNotPending(id) => write!(f, "Order {} is not pending", id),
         }
     }
 }
