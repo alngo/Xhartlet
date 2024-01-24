@@ -1,13 +1,13 @@
 use super::position::Direction;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Kind {
     MARKET(Direction),
     LIMIT(Direction),
     STOP(Direction),
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Status {
     PENDING,
     FILLED,

@@ -1,8 +1,6 @@
 use super::common::{Error, Result};
-use super::position::Position;
 use super::value_objects::order::{Kind, Status};
 use super::value_objects::{id::Id, price::Price, quantity::Quantity, ticker::Ticker};
-
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Order {
     id: Id,
@@ -86,14 +84,14 @@ mod tests {
         let status = Status::PENDING;
 
         let order = Order::new(
-            id.clone(),
-            account_id.clone(),
-            portfolio_id.clone(),
-            market_id.clone(),
-            ticker.clone(),
-            quantity.clone(),
-            price.clone(),
-            kind.clone(),
+            id,
+            account_id,
+            portfolio_id,
+            market_id,
+            ticker,
+            quantity,
+            price,
+            kind,
         )
         .unwrap();
 
@@ -113,12 +111,12 @@ mod tests {
         let id = Id(1);
         let quantity = Quantity(0);
         let order = Order::new(
-            id.clone(),
-            id.clone(),
-            id.clone(),
-            id.clone(),
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
-            quantity.clone(),
+            quantity,
             Price(dec!(1.1394)),
             Kind::MARKET(Direction::LONG),
         );
@@ -131,13 +129,13 @@ mod tests {
         let id = Id(1);
         let price = Price(dec!(-1.1394));
         let order = Order::new(
-            id.clone(),
-            id.clone(),
-            id.clone(),
-            id.clone(),
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
             Quantity(1000),
-            price.clone(),
+            price,
             Kind::MARKET(Direction::SHORT),
         );
 
@@ -148,10 +146,10 @@ mod tests {
     fn test_cancel() {
         let id = Id(1);
         let mut order = Order::new(
-            id.clone(),
-            id.clone(),
-            id.clone(),
-            id.clone(),
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
             Quantity(1000),
             Price(dec!(1.1394)),
@@ -167,10 +165,10 @@ mod tests {
     fn test_fill() {
         let id = Id(1);
         let mut order = Order::new(
-            id.clone(),
-            id.clone(),
-            id.clone(),
-            id.clone(),
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
             Quantity(1000),
             Price(dec!(1.1394)),

@@ -1,6 +1,6 @@
 use core::fmt;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Id(pub u32);
 
 #[cfg(test)]

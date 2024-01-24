@@ -5,7 +5,7 @@ use rust_decimal::Decimal;
 
 use super::quantity::Quantity;
 
-#[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Price(pub Decimal);
 
 impl Mul<Quantity> for Price {
@@ -43,5 +43,23 @@ mod tests {
         let quantity = Quantity(2);
         let expected = Price(dec!(42.42));
         assert_eq!(price * quantity, expected);
+    }
+
+    #[test]
+    fn test_is_zero() {
+        let price = Price(dec!(21.21));
+        assert_ne!(price.is_zero(), true);
+
+        let price = Price(dec!(0));
+        assert_eq!(price.is_zero(), true);
+    }
+
+    #[test]
+    fn test_is_negative() {
+        let price = Price(dec!(21.21));
+        assert_ne!(price.is_negative(), true);
+
+        let price = Price(dec!(-21.21));
+        assert_eq!(price.is_negative(), true);
     }
 }
