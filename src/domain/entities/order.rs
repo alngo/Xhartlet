@@ -15,7 +15,7 @@ pub struct Order {
 }
 
 impl Order {
-    fn new(
+    pub fn new(
         id: Id,
         account_id: Id,
         portfolio_id: Id,
@@ -42,6 +42,18 @@ impl Order {
             kind,
             status: Status::PENDING,
         })
+    }
+
+    pub fn quantity(&self) -> Quantity {
+        self.quantity
+    }
+
+    pub fn kind(&self) -> Kind {
+        self.kind
+    }
+
+    pub fn price(&self) -> Price {
+        self.price
     }
 
     pub fn cancel(&mut self) -> Result<()> {

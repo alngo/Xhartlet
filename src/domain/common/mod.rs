@@ -2,7 +2,7 @@ use core::fmt;
 
 use rust_decimal::Decimal;
 
-use super::value_objects::{id::Id, price::Price, quantity::Quantity};
+use super::value_objects::{id::Id, position::Direction, price::Price, quantity::Quantity};
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -13,6 +13,7 @@ pub enum Error {
     InvalidBalance(Decimal),
     InvalidQuantity(Quantity),
     InvalidPrice(Price),
+    InvalidDirection(Direction),
     OrderNotPending(Id),
 }
 
@@ -26,6 +27,7 @@ impl fmt::Display for Error {
             Error::InvalidBalance(balance) => write!(f, "Invalid Balance {}", balance),
             Error::InvalidQuantity(quantity) => write!(f, "Invalid Quantity {}", quantity),
             Error::InvalidPrice(price) => write!(f, "Invalid Price {}", price),
+            Error::InvalidDirection(direction) => write!(f, "Invalid direction {}", direction),
             Error::OrderNotPending(id) => write!(f, "Order {} is not pending", id),
         }
     }

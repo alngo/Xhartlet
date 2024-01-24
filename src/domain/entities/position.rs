@@ -1,5 +1,6 @@
 use super::common::{Error, Result};
 use super::entities::order::Order;
+use super::value_objects::order::Kind;
 use super::value_objects::position::Direction;
 use super::value_objects::{id::Id, price::Price, quantity::Quantity, ticker::Ticker};
 
@@ -64,17 +65,45 @@ impl Position {
     }
 
     pub fn set_stop_loss(&mut self, stop_loss: Order) -> Result<()> {
-        todo!()
+        if stop_loss.kind() != Kind::STOP(self.direction.opposite()) {
+            return Err(Error::InvalidDirection(*stop_loss.kind().direction()));
+        }
+        if stop_loss.quantity() != self.quantity {
+            return Err(Error::InvalidQuantity(stop_loss.quantity()));
+        }
+        if self.direction == Direction::LONG && stop_loss.price() >= self.entry_price {
+            return Err(Error::InvalidPrice(stop_loss.price()));
+        }
+        if self.direction == Direction::SHORT && stop_loss.price() <= self.entry_price {
+            return Err(Error::InvalidPrice(stop_loss.price()));
+        }
+        self.stop_loss = Some(stop_loss);
+        Ok(())
     }
 
-    pub fn set_take_profit(&mut self, stop_loss: Order) -> Result<()> {
-        todo!()
+    pub fn set_take_profit(&mut self, take_profit: Order) -> Result<()> {
+        if take_profit.kind() != Kind::LIMIT(self.direction.opposite()) {
+            return Err(Error::InvalidDirection(*take_profit.kind().direction()));
+        }
+        if take_profit.quantity() != self.quantity {
+            return Err(Error::InvalidQuantity(take_profit.quantity()));
+        }
+        if self.direction == Direction::LONG && take_profit.price() <= self.entry_price {
+            return Err(Error::InvalidPrice(take_profit.price()));
+        }
+        if self.direction == Direction::SHORT && take_profit.price() >= self.entry_price {
+            return Err(Error::InvalidPrice(take_profit.price()));
+        }
+        self.take_profit = Some(take_profit);
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use rust_decimal_macros::dec;
+
+    use crate::domain::value_objects::order::Kind;
 
     use super::*;
 
@@ -132,5 +161,67 @@ mod tests {
         assert_eq!(position.exit(Price(dec!(1.0000))).is_ok(), true);
         assert_eq!(position.exit_price.is_some(), true);
         assert_eq!(position.exit_price, Some(Price(dec!(1.0000))));
+    }
+
+    #[test]
+    fn test_set_invalid_direction_stop_loss() {
+        let mut position = Position::new(
+            Id(1),
+            Id(1),
+            Id(1),
+            Id(1),
+            Ticker::EURUSD,
+            Quantity(5),
+            Direction::LONG,
+            Price(dec!(1.1234)),
+        )
+        .unwrap();
+
+        let order = Order::new(
+            Id(1),
+            Id(1),
+            Id(1),
+            Id(1),
+            Ticker::EURUSD,
+            Quantity(5),
+            Price(dec!(1.1234)),
+            Kind::STOP(Direction::LONG),
+        )
+        .unwrap();
+
+        let result = position.set_stop_loss(order);
+        assert!(result.is_err());
+        assert_eq!(result, Err(Error::InvalidDirection(Direction::LONG)));
+    }
+
+    #[test]
+    fn test_set_invalid_quantity_stop_loss() {
+        let mut position = Position::new(
+            Id(1),
+            Id(1),
+            Id(1),
+            Id(1),
+            Ticker::EURUSD,
+            Quantity(5),
+            Direction::LONG,
+            Price(dec!(1.1234)),
+        )
+        .unwrap();
+
+        let order = Order::new(
+            Id(1),
+            Id(1),
+            Id(1),
+            Id(1),
+            Ticker::EURUSD,
+            Quantity(2),
+            Price(dec!(1.1234)),
+            Kind::STOP(Direction::SHORT),
+        )
+        .unwrap();
+        let result = position.set_stop_loss(order);
+
+        assert!(result.is_err());
+        assert_eq!(result, Err(Error::InvalidQuantity(Quantity(2))));
     }
 }

@@ -14,6 +14,16 @@ pub enum Status {
     CANCELLED,
 }
 
+impl Kind {
+    pub fn direction(&self) -> &Direction {
+        match self {
+            Self::MARKET(direction) => direction,
+            Self::LIMIT(direction) => direction,
+            Self::STOP(direction) => direction,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
