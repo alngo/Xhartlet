@@ -21,6 +21,12 @@ impl fmt::Display for Quantity {
     }
 }
 
+impl Quantity {
+    pub fn is_zero(&self) -> bool {
+        self.0 == 0
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use rust_decimal_macros::dec;

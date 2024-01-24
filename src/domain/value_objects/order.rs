@@ -1,8 +1,10 @@
+use super::position::Direction;
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Kind {
-    MARKET,
-    LIMIT,
-    STOP,
+    MARKET(Direction),
+    LIMIT(Direction),
+    STOP(Direction),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -17,12 +19,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_Kind() {
-        assert_eq!(Kind::MARKET, Kind::MARKET);
+    fn test_kind() {
+        assert_eq!(
+            Kind::MARKET(Direction::SHORT),
+            Kind::MARKET(Direction::SHORT)
+        );
     }
 
     #[test]
-    fn test_Status() {
+    fn test_status() {
         assert_eq!(Status::PENDING, Status::PENDING);
     }
 }

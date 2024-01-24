@@ -21,6 +21,16 @@ impl fmt::Display for Price {
     }
 }
 
+impl Price {
+    pub fn is_zero(&self) -> bool {
+        self.0 == Decimal::ZERO
+    }
+
+    pub fn is_negative(&self) -> bool {
+        self.0.is_sign_negative()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use rust_decimal_macros::dec;

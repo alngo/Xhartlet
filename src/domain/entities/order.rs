@@ -1,5 +1,3 @@
-use rust_decimal::Decimal;
-
 use super::common::{Error, Result};
 use super::position::Position;
 use super::value_objects::order::{Kind, Status};
@@ -29,10 +27,10 @@ impl Order {
         price: Price,
         kind: Kind,
     ) -> Result<Self> {
-        if quantity.0 == 0 {
+        if quantity.is_zero() {
             return Err(Error::InvalidQuantity(quantity));
         }
-        if price.0 < Decimal::ZERO {
+        if price.is_negative() {
             return Err(Error::InvalidPrice(price));
         }
         Ok(Self {
@@ -57,10 +55,10 @@ impl Order {
         }
     }
 
-    pub fn fill(&mut self) -> Result<Position> {
+    pub fn fill(&mut self) -> Result<()> {
         if self.status == Status::PENDING {
             self.status = Status::FILLED;
-            Ok(Position) 
+            Ok(())
         } else {
             Err(Error::OrderNotPending(self.id.clone()))
         }
@@ -70,6 +68,8 @@ impl Order {
 #[cfg(test)]
 mod tests {
     use rust_decimal_macros::dec;
+
+    use crate::domain::value_objects::position::Direction;
 
     use super::*;
 
@@ -82,7 +82,7 @@ mod tests {
         let ticker = Ticker::EURUSD;
         let quantity = Quantity(1000);
         let price = Price(dec!(1.1394));
-        let kind = Kind::MARKET;
+        let kind = Kind::MARKET(Direction::LONG);
         let status = Status::PENDING;
 
         let order = Order::new(
@@ -120,7 +120,7 @@ mod tests {
             Ticker::EURUSD,
             quantity.clone(),
             Price(dec!(1.1394)),
-            Kind::MARKET,
+            Kind::MARKET(Direction::LONG),
         );
 
         assert_eq!(order, Err(Error::InvalidQuantity(quantity)));
@@ -138,7 +138,7 @@ mod tests {
             Ticker::EURUSD,
             Quantity(1000),
             price.clone(),
-            Kind::MARKET,
+            Kind::MARKET(Direction::SHORT),
         );
 
         assert_eq!(order, Err(Error::InvalidPrice(price)));
@@ -155,11 +155,30 @@ mod tests {
             Ticker::EURUSD,
             Quantity(1000),
             Price(dec!(1.1394)),
-            Kind::MARKET,
+            Kind::MARKET(Direction::LONG),
         )
         .unwrap();
         assert_eq!(order.status, Status::PENDING);
         order.cancel().unwrap();
         assert_eq!(order.status, Status::CANCELLED);
+    }
+
+    #[test]
+    fn test_fill() {
+        let id = Id(1);
+        let mut order = Order::new(
+            id.clone(),
+            id.clone(),
+            id.clone(),
+            id.clone(),
+            Ticker::EURUSD,
+            Quantity(1000),
+            Price(dec!(1.1394)),
+            Kind::MARKET(Direction::SHORT),
+        )
+        .unwrap();
+        assert_eq!(order.status, Status::PENDING);
+        order.fill().unwrap();
+        assert_eq!(order.status, Status::FILLED);
     }
 }
