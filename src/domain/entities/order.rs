@@ -1,7 +1,7 @@
 use super::common::{Error, Result};
 use super::value_objects::order::{Kind, Status};
 use super::value_objects::{id::Id, price::Price, quantity::Quantity, ticker::Ticker};
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Order {
     id: Id,
     account_id: Id,

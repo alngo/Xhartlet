@@ -65,6 +65,8 @@ impl Position {
     }
 
     pub fn set_stop_loss(&mut self, stop_loss: Order) -> Result<()> {
+        // TODO: Maybe the check has to be done at higher level to avoid direct dependency with Order
+        // TODO: Check Market Price
         if stop_loss.kind() != Kind::STOP(self.direction.opposite()) {
             return Err(Error::InvalidDirection(*stop_loss.kind().direction()));
         }
@@ -82,6 +84,8 @@ impl Position {
     }
 
     pub fn set_take_profit(&mut self, take_profit: Order) -> Result<()> {
+        // TODO: Maybe the check has to be done at higher level to avoid direct dependency with Order
+        // TODO: Check Market Price
         if take_profit.kind() != Kind::LIMIT(self.direction.opposite()) {
             return Err(Error::InvalidDirection(*take_profit.kind().direction()));
         }
@@ -101,6 +105,8 @@ impl Position {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use rust_decimal_macros::dec;
 
     use crate::domain::value_objects::order::Kind;
@@ -164,12 +170,13 @@ mod tests {
     }
 
     #[test]
-    fn test_set_invalid_direction_stop_loss() {
+    fn test_invalid_stop_loss_for_long_position() {
+        let id = Id(1);
         let mut position = Position::new(
-            Id(1),
-            Id(1),
-            Id(1),
-            Id(1),
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
             Quantity(5),
             Direction::LONG,
@@ -177,30 +184,137 @@ mod tests {
         )
         .unwrap();
 
-        let order = Order::new(
-            Id(1),
-            Id(1),
-            Id(1),
-            Id(1),
-            Ticker::EURUSD,
-            Quantity(5),
-            Price(dec!(1.1234)),
-            Kind::STOP(Direction::LONG),
-        )
-        .unwrap();
+        let mut orders_expectations: HashMap<Order, std::result::Result<_, Error>> = HashMap::new();
+        // Order is in the same direction as the position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1234)),
+                Kind::STOP(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidDirection(Direction::LONG)),
+        );
+        // Order quantity is different from the position quantity
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(2),
+                Price(dec!(1.1234)),
+                Kind::STOP(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidQuantity(Quantity(2))),
+        );
+        // Order price is higher than the entry price for a long position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1235)),
+                Kind::STOP(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidPrice(Price(dec!(1.1235)))),
+        );
 
-        let result = position.set_stop_loss(order);
-        assert!(result.is_err());
-        assert_eq!(result, Err(Error::InvalidDirection(Direction::LONG)));
+        for (order, expectation) in orders_expectations {
+            let result = position.set_stop_loss(order);
+            assert!(result.is_err());
+            assert_eq!(result, expectation);
+        }
     }
 
     #[test]
-    fn test_set_invalid_quantity_stop_loss() {
+    fn test_invalid_stop_loss_for_short_position() {
+        let id = Id(1);
         let mut position = Position::new(
-            Id(1),
-            Id(1),
-            Id(1),
-            Id(1),
+            id,
+            id,
+            id,
+            id,
+            Ticker::EURUSD,
+            Quantity(5),
+            Direction::SHORT,
+            Price(dec!(1.1234)),
+        )
+        .unwrap();
+
+        let mut orders_expectations: HashMap<Order, std::result::Result<_, Error>> = HashMap::new();
+        // Order is in the same direction as the position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1234)),
+                Kind::STOP(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidDirection(Direction::SHORT)),
+        );
+        // Order quantity is different from the position quantity
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(2),
+                Price(dec!(1.1234)),
+                Kind::STOP(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidQuantity(Quantity(2))),
+        );
+        // Order price is lower than the entry price for a short position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1233)),
+                Kind::STOP(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidPrice(Price(dec!(1.1233)))),
+        );
+
+        for (order, expectation) in orders_expectations {
+            let result = position.set_stop_loss(order);
+            assert!(result.is_err());
+            assert_eq!(result, expectation);
+        }
+    }
+
+    #[test]
+    fn test_invalid_take_profit_for_long_position() {
+        let id = Id(1);
+        let mut position = Position::new(
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
             Quantity(5),
             Direction::LONG,
@@ -208,20 +322,126 @@ mod tests {
         )
         .unwrap();
 
-        let order = Order::new(
-            Id(1),
-            Id(1),
-            Id(1),
-            Id(1),
+        let mut orders_expectations: HashMap<Order, std::result::Result<_, Error>> = HashMap::new();
+        // Order is in the same direction as the position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1234)),
+                Kind::LIMIT(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidDirection(Direction::LONG)),
+        );
+        // Order quantity is different from the position quantity
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(2),
+                Price(dec!(1.1234)),
+                Kind::LIMIT(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidQuantity(Quantity(2))),
+        );
+        // Order price is lower than the entry price for a long position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1233)),
+                Kind::LIMIT(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidPrice(Price(dec!(1.1233)))),
+        );
+
+        for (order, expectation) in orders_expectations {
+            let result = position.set_take_profit(order);
+            assert!(result.is_err());
+            assert_eq!(result, expectation);
+        }
+    }
+
+    #[test]
+    fn test_invalid_take_profit_for_short_position() {
+        let id = Id(1);
+        let mut position = Position::new(
+            id,
+            id,
+            id,
+            id,
             Ticker::EURUSD,
-            Quantity(2),
+            Quantity(5),
+            Direction::SHORT,
             Price(dec!(1.1234)),
-            Kind::STOP(Direction::SHORT),
         )
         .unwrap();
-        let result = position.set_stop_loss(order);
 
-        assert!(result.is_err());
-        assert_eq!(result, Err(Error::InvalidQuantity(Quantity(2))));
+        let mut orders_expectations: HashMap<Order, std::result::Result<_, Error>> = HashMap::new();
+        // Order is in the same direction as the position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1234)),
+                Kind::LIMIT(Direction::SHORT),
+            )
+            .unwrap(),
+            Err(Error::InvalidDirection(Direction::SHORT)),
+        );
+        // Order quantity is different from the position quantity
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(2),
+                Price(dec!(1.1234)),
+                Kind::LIMIT(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidQuantity(Quantity(2))),
+        );
+        // Order price is higher than the entry price for a short position
+        orders_expectations.insert(
+            Order::new(
+                id,
+                id,
+                id,
+                id,
+                Ticker::EURUSD,
+                Quantity(5),
+                Price(dec!(1.1235)),
+                Kind::LIMIT(Direction::LONG),
+            )
+            .unwrap(),
+            Err(Error::InvalidPrice(Price(dec!(1.1235)))),
+        );
+
+        for (order, expectation) in orders_expectations {
+            let result = position.set_take_profit(order);
+            assert!(result.is_err());
+            assert_eq!(result, expectation);
+        }
     }
 }

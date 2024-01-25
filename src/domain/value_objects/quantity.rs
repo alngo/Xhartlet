@@ -5,7 +5,7 @@ use rust_decimal::Decimal;
 
 use super::price::Price;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, PartialOrd, Hash)]
 pub struct Quantity(pub u32);
 
 impl Mul<Price> for Quantity {
