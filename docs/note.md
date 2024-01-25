@@ -20,14 +20,16 @@
 - [x] Account
 - [x] Order
 - [x] Position
-- [ ] Instrument
-- [ ] Candle
+- [x] Instrument
+- [x] Candle
 
 ### Aggregate
 
-- Market
-- History
-- OrderBook
-- Portfolio
+- [ ] Market
+- [x] History
+- [ ] OrderBook
+- [ ] Portfolio
 
 ### Services
+
+### Repositories?

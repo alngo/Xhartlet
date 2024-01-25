@@ -65,8 +65,6 @@ impl Position {
     }
 
     pub fn set_stop_loss(&mut self, stop_loss: Order) -> Result<()> {
-        // TODO: Maybe the check has to be done at higher level to avoid direct dependency with Order
-        // TODO: Check Market Price
         if stop_loss.kind() != Kind::STOP(self.direction.opposite()) {
             return Err(Error::InvalidDirection(*stop_loss.kind().direction()));
         }
@@ -84,8 +82,6 @@ impl Position {
     }
 
     pub fn set_take_profit(&mut self, take_profit: Order) -> Result<()> {
-        // TODO: Maybe the check has to be done at higher level to avoid direct dependency with Order
-        // TODO: Check Market Price
         if take_profit.kind() != Kind::LIMIT(self.direction.opposite()) {
             return Err(Error::InvalidDirection(*take_profit.kind().direction()));
         }
