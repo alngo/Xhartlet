@@ -2,6 +2,40 @@
 
 ## Domain
 
+### Core concept
+
+
+
+Refactor folder hierarchy and think more about model
+
+```
+/common
+  /value_objects
+  /errors
+
+/user
+  + id
+  + name
+  + account
+  + portfolio
+  + orders
+
+/market
+  + id
+  + name
+  + instruments
+  + order_books
+
+/instruments
+  + id
+  + name
+  + history
+```
+
+### User
+- Account
+- Portfolio
+
 ### ValueObject
 
 - [x] Id,
@@ -9,27 +43,22 @@
 - [x] Quantity
 - [x] Ticker
 - [x] Timeframe
-
 - [x] Direction
 - [x] Order Kind
 - [x] Order Status
 
-### Entity
+### Aggregate
 
 - [x] User
 - [x] Account
+- [x] Portfolio
+
+- [x] Market
+- [x] History
+- [x] OrderBook
 - [x] Order
 - [x] Position
 - [x] Instrument
 - [x] Candle
 
-### Aggregate
-
-- [ ] Market
-- [x] History
-- [ ] OrderBook
-- [ ] Portfolio
-
 ### Services
-
-### Repositories?
