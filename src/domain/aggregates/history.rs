@@ -1,6 +1,6 @@
 use super::{Error, Result};
 
-use super::candle::Candle;
+use super::entities::candle::Candle;
 use super::timeframe::Timeframe;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
