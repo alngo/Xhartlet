@@ -7,34 +7,26 @@
 
 
 Refactor folder hierarchy and think more about model
+Simplify
 
 ```
 /common
   /value_objects
   /errors
 
-/user
+/user -> root aggregate
   + id
   + name
   + account
-  + portfolio
-  + orders
+  + portfolio -> aggregate
+    + positions
 
-/market
+/ticker
   + id
-  + name
-  + instruments
-  + order_books
-
-/instruments
-  + id
-  + name
   + history
+    + candles
+  + orders
 ```
-
-### User
-- Account
-- Portfolio
 
 ### ValueObject
 
