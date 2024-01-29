@@ -1,3 +1,3 @@
-mod error;
+mod result;
 
-pub use error::CommonError;
+pub use result::Result;

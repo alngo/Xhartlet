@@ -1,2 +1,4 @@
-pub mod errors;
-pub mod value_objects;
+mod errors;
+mod value_objects;
+
+pub use errors::Result;
