@@ -1,1 +1,1 @@
-pub type UserId = i32;
+pub type UserId = uuid::Uuid;
