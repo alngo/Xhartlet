@@ -1,5 +1,11 @@
+mod entities;
 mod value_objects;
 
-pub use value_objects::InstrumentId;
+pub use entities::{Candle, History};
+pub use value_objects::{InstrumentId, Timeframe};
 
-pub struct Instrument;
+pub struct Instrument {
+    id: InstrumentId,
+    decimal_point: u8,
+    history: History,
+}
