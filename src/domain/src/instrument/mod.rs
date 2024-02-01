@@ -32,7 +32,7 @@ pub struct Instrument {
     ticker: Ticker,
     decimal_point: u32,
     timeframe: Timeframe,
-    candles: Vec<Candle>,
+    history: Vec<Candle>,
 }
 
 impl Instrument {
@@ -41,7 +41,7 @@ impl Instrument {
             ticker,
             decimal_point,
             timeframe,
-            candles: Vec::new(),
+            history: Vec::new(),
         }
     }
 
@@ -53,10 +53,10 @@ impl Instrument {
             close.round_dp(self.decimal_point),
             volume,
         );
-        self.candles.push(candle);
+        self.history.push(candle);
     }
 
-    pub fn candles(&self, timeframe: Timeframe) -> Result<&[Candle]> {
+    pub fn history(&self, timeframe: Timeframe) -> Result<&[Candle]> {
         if self.timeframe > timeframe {
             return Err(Box::new(InstrumentError::InvalidTimeframe(
                 timeframe,
@@ -64,7 +64,7 @@ impl Instrument {
             )));
         }
         if self.timeframe == timeframe {
-            return Ok(&self.candles);
+            return Ok(&self.history);
         } else {
             todo!()
         }
@@ -83,13 +83,12 @@ mod tests {
         assert_eq!(instrument.ticker, Ticker::EURUSD);
         assert_eq!(instrument.decimal_point, 2);
         assert_eq!(instrument.timeframe, Timeframe::M5);
-        assert_eq!(instrument.candles.len(), 0);
+        assert_eq!(instrument.history.len(), 0);
     }
 
     #[test]
     fn test_add() {
         let mut instrument = Instrument::new(Ticker::EURUSD, 2, Timeframe::M5);
-        assert_eq!(instrument.candles.len(), 1);
         instrument.add(
             dec!(1.2345),
             dec!(1.2346),
@@ -97,13 +96,39 @@ mod tests {
             dec!(1.2345),
             dec!(100),
         );
-        assert_eq!(instrument.candles[0].open, dec!(1.23));
-        assert_eq!(instrument.candles[0].high, dec!(1.23));
-        assert_eq!(instrument.candles[0].low, dec!(1.23));
-        assert_eq!(instrument.candles[0].close, dec!(1.23));
-        assert_eq!(instrument.candles[0].volume, dec!(100));
+        assert_eq!(instrument.history.len(), 1);
+        assert_eq!(instrument.history[0].open, dec!(1.23));
+        assert_eq!(instrument.history[0].high, dec!(1.23));
+        assert_eq!(instrument.history[0].low, dec!(1.23));
+        assert_eq!(instrument.history[0].close, dec!(1.23));
+        assert_eq!(instrument.history[0].volume, dec!(100));
     }
 
     #[test]
-    fn test_invalid_candles() {}
+    fn test_invalid_history() {
+        let mut instrument = Instrument::new(Ticker::EURUSD, 2, Timeframe::M5);
+        instrument.add(
+            dec!(1.2345),
+            dec!(1.2346),
+            dec!(1.2344),
+            dec!(1.2345),
+            dec!(100),
+        );
+        let history = instrument.history(Timeframe::M1);
+        assert!(history.is_err());
+    }
+
+    #[test]
+    fn test_same_history() {
+        let mut instrument = Instrument::new(Ticker::EURUSD, 2, Timeframe::M5);
+        instrument.add(
+            dec!(1.2345),
+            dec!(1.2346),
+            dec!(1.2344),
+            dec!(1.2345),
+            dec!(100),
+        );
+        let history = instrument.history(Timeframe::M5);
+        assert!(history.is_ok());
+    }
 }
