@@ -2,10 +2,10 @@ mod entities;
 mod value_objects;
 
 pub use entities::{Candle, History};
-pub use value_objects::{InstrumentId, Timeframe};
+pub use value_objects::{Ticker, Timeframe};
 
 pub struct Instrument {
-    id: InstrumentId,
+    ticker: Ticker,
     decimal_point: u8,
     history: History,
 }

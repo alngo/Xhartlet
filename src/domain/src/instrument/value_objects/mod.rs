@@ -1,5 +1,5 @@
-mod instrument_id;
+mod ticker;
 mod timeframe;
 
-pub use instrument_id::InstrumentId;
+pub use ticker::Ticker;
 pub use timeframe::Timeframe;
