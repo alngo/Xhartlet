@@ -1,13 +1,13 @@
 mod entities;
 mod value_objects;
 
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 pub use value_objects::MarketId;
 
-use crate::instrument::Ticker;
+use crate::{common::Ticker, instrument::Instrument};
 
 pub struct Market {
     id: MarketId,
-    instruments: HashSet<Ticker>,
+    instruments: HashMap<Ticker, Instrument>,
 }

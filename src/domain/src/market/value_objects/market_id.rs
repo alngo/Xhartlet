@@ -1,1 +1,3 @@
-pub type MarketId = uuid::Uuid;
+pub enum MarketId {
+    FOREX,
+}
