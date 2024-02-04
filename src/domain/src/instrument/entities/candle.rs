@@ -19,6 +19,26 @@ impl Candle {
             volume,
         }
     }
+
+    pub fn open(&self) -> Price {
+        self.open
+    }
+
+    pub fn high(&self) -> Price {
+        self.high
+    }
+
+    pub fn low(&self) -> Price {
+        self.low
+    }
+
+    pub fn close(&self) -> Price {
+        self.close
+    }
+
+    pub fn volume(&self) -> Volume {
+        self.volume
+    }
 }
 
 #[cfg(test)]
