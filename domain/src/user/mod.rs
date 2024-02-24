@@ -6,9 +6,9 @@ pub mod value_objects {
 
 use value_objects::{Password, UserId, Username};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct User {
-    id: UserId,
-    username: Username,
-    password: Password,
+    pub id: UserId,
+    pub username: Username,
+    pub password: Password,
 }
