@@ -1,6 +1,23 @@
-[workspace]
+[package]
+name = "xhartlet"
+version = "0.1.0"
+authors = ["Alex Ngo <>"]
+edition = "2021"
+publish = false
 
+[[bin]]
+name = "xhartlet-cli"
+path = "cli/src/main.rs"
+
+[workspace]
 members = [
  "cli",
- "common",
+ "domain",
+ "application",
+ "interface"
 ]
+
+[patch.crates-io]
+xhartlet-domain         = { path = "domain"         }
+xhartlet-application    = { path = "application"    }
+xhartlet-interface      = { path = "interface"      }
