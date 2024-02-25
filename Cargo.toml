@@ -14,10 +14,10 @@ members = [
  "cli",
  "domain",
  "application",
- "interface"
+ "infrastructure"
 ]
 
 [patch.crates-io]
 xhartlet-domain         = { path = "domain"         }
 xhartlet-application    = { path = "application"    }
-xhartlet-interface      = { path = "interface"      }
+xhartlet-infrastructure = { path = "infrastructure" }

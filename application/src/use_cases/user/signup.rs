@@ -4,7 +4,7 @@ use xhartlet_domain::user::User;
 
 use crate::use_cases::use_case::ApplicationError;
 use crate::{
-    repositories::{
+    interfaces::repositories::{
         identifier::{Identifier, NewIdError},
         user::{Error as UserRepositoryError, Record, Repository},
     },
@@ -38,18 +38,18 @@ impl From<NewIdError> for ApplicationError {
     }
 }
 
-pub struct CreateUser<'r, 'i, R, I> {
+pub struct SignUp<'r, 'i, R, I> {
     repository: &'r R,
     identifier: &'i I,
 }
 
-impl<'r, 'i, R, I> CreateUser<'r, 'i, R, I>
+impl<'r, 'i, R, I> SignUp<'r, 'i, R, I>
 where
     R: Repository,
     I: Identifier<UserId>,
 {
     pub fn new(repository: &'r R, identifier: &'i I) -> Self {
-        CreateUser {
+        SignUp {
             repository,
             identifier,
         }
@@ -57,7 +57,7 @@ where
 }
 
 #[async_trait(?Send)]
-impl<'r, 'i, R, I> UseCase for CreateUser<'r, 'i, R, I>
+impl<'r, 'i, R, I> UseCase for SignUp<'r, 'i, R, I>
 where
     R: Repository,
     I: Identifier<UserId>,
@@ -68,7 +68,7 @@ where
     async fn execute(&self, request: Self::Request) -> Result<Self::Response, ApplicationError> {
         let id = self.identifier.new_id().await?;
         let user = User {
-            id: id.clone(),
+            id,
             username: request.username,
             password: request.password,
         };
@@ -81,11 +81,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repositories::identifier::MockIdentifier;
-    use crate::repositories::user::MockRepository;
+    use crate::interfaces::repositories::identifier::MockIdentifier;
+    use crate::interfaces::repositories::user::MockRepository;
 
     #[tokio::test]
-    async fn test_create_new_user() {
+    async fn test_signup() {
         let username = "username".to_string();
         let password = "password".to_string();
         let request = Request { username, password };
@@ -103,13 +103,13 @@ mod tests {
             .times(1)
             .returning(move |_| Ok(id.clone()));
 
-        let use_case = CreateUser::new(&repository, &identifier);
+        let use_case = SignUp::new(&repository, &identifier);
         let response = use_case.execute(request).await.unwrap();
         assert_eq!(response.id, id);
     }
 
     #[tokio::test]
-    async fn test_create_new_user_repository_error() {
+    async fn test_signup_repository_error() {
         let username = "username".to_string();
         let password = "password".to_string();
         let request = Request { username, password };
@@ -127,13 +127,13 @@ mod tests {
             .times(1)
             .returning(move |_| Err(UserRepositoryError::ConnectionError));
 
-        let use_case = CreateUser::new(&repository, &identifier);
+        let use_case = SignUp::new(&repository, &identifier);
         let response = use_case.execute(request).await;
         assert!(response.is_err());
     }
 
     #[tokio::test]
-    async fn test_create_new_user_identifier_error() {
+    async fn test_signup_identifier_error() {
         let username = "username".to_string();
         let password = "password".to_string();
         let request = Request { username, password };
@@ -146,7 +146,7 @@ mod tests {
 
         let repository = MockRepository::new();
 
-        let use_case = CreateUser::new(&repository, &identifier);
+        let use_case = SignUp::new(&repository, &identifier);
         let response = use_case.execute(request).await;
         assert!(response.is_err());
     }

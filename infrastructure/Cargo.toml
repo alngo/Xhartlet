@@ -1,5 +1,5 @@
 [package]
-name = "xhartlet-interface"
+name = "xhartlet-infrastructure"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 xhartlet-domain = "0.1.0"
+xhartlet-application = "0.1.0"
