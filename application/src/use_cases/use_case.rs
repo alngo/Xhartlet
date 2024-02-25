@@ -1,17 +1,18 @@
+use core::fmt;
 use std::error::Error;
 
 use async_trait::async_trait;
 
-use super::user::create::CreateUserError;
-
 #[derive(Debug)]
-pub enum ApplicationError {
-    CreateUserError(CreateUserError),
+pub struct ApplicationError {
+    pub message: String,
 }
 
-impl From<CreateUserError> for ApplicationError {
-    fn from(e: CreateUserError) -> Self {
-        ApplicationError::CreateUserError(e)
+impl Error for ApplicationError {}
+
+impl fmt::Display for ApplicationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ApplicationError: {}", self.message)
     }
 }
 

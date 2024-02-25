@@ -1,13 +1,11 @@
-use core::fmt;
-use std::error::Error;
-
 use async_trait::async_trait;
 use xhartlet_domain::user::value_objects::{Password, UserId, Username};
 use xhartlet_domain::user::User;
 
+use crate::use_cases::use_case::ApplicationError;
 use crate::{
     repositories::{
-        identifier::{NewId, NewIdError},
+        identifier::{Identifier, NewIdError},
         user::{Error as UserRepositoryError, Record, Repository},
     },
     use_cases::use_case::UseCase,
@@ -24,64 +22,51 @@ pub struct Response {
     pub id: UserId,
 }
 
-#[derive(Debug)]
-pub enum CreateUserError {
-    RepositoryError(UserRepositoryError),
-    NewIdError(NewIdError),
-}
-
-impl From<UserRepositoryError> for CreateUserError {
+impl From<UserRepositoryError> for ApplicationError {
     fn from(e: UserRepositoryError) -> Self {
-        CreateUserError::RepositoryError(e)
-    }
-}
-
-impl From<NewIdError> for CreateUserError {
-    fn from(e: NewIdError) -> Self {
-        CreateUserError::NewIdError(e)
-    }
-}
-
-impl fmt::Display for CreateUserError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            CreateUserError::RepositoryError(e) => write!(f, "RepositoryError: {:?}", e),
-            CreateUserError::NewIdError(e) => write!(f, "NewIdError: {:?}", e),
+        ApplicationError {
+            message: format!("Create user error: {:?}", e),
         }
     }
 }
 
-impl Error for CreateUserError {}
-
-pub struct CreateUser<'r, 'g, R, G> {
-    repository: &'r R,
-    id_generator: &'g G,
+impl From<NewIdError> for ApplicationError {
+    fn from(e: NewIdError) -> Self {
+        ApplicationError {
+            message: format!("Create user error: {:?}", e),
+        }
+    }
 }
 
-impl<'r, 'g, R, G> CreateUser<'r, 'g, R, G>
+pub struct CreateUser<'r, 'i, R, I> {
+    repository: &'r R,
+    identifier: &'i I,
+}
+
+impl<'r, 'i, R, I> CreateUser<'r, 'i, R, I>
 where
     R: Repository,
-    G: NewId<UserId>,
+    I: Identifier<UserId>,
 {
-    pub fn new(repository: &'r R, id_generator: &'g G) -> Self {
+    pub fn new(repository: &'r R, identifier: &'i I) -> Self {
         CreateUser {
             repository,
-            id_generator,
+            identifier,
         }
     }
 }
 
 #[async_trait(?Send)]
-impl<'r, 'g, R, G> UseCase for CreateUser<'r, 'g, R, G>
+impl<'r, 'i, R, I> UseCase for CreateUser<'r, 'i, R, I>
 where
     R: Repository,
-    G: NewId<UserId>,
+    I: Identifier<UserId>,
 {
     type Request = Request;
     type Response = Response;
 
-    async fn execute(&self, request: Self::Request) -> Result<Self::Response, CreateUserError> {
-        let id = self.id_generator.new_id().await?;
+    async fn execute(&self, request: Self::Request) -> Result<Self::Response, ApplicationError> {
+        let id = self.identifier.new_id().await?;
         let user = User {
             id: id.clone(),
             username: request.username,
@@ -90,5 +75,79 @@ where
         let record = Record { user };
         self.repository.create(record).await?;
         Ok(Response { id })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::repositories::identifier::MockIdentifier;
+    use crate::repositories::user::MockRepository;
+
+    #[tokio::test]
+    async fn test_create_new_user() {
+        let username = "username".to_string();
+        let password = "password".to_string();
+        let request = Request { username, password };
+
+        let id = UserId::new_v4();
+        let mut identifier = MockIdentifier::new();
+        identifier
+            .expect_new_id()
+            .times(1)
+            .returning(move || Ok(id.clone()));
+
+        let mut repository = MockRepository::new();
+        repository
+            .expect_create()
+            .times(1)
+            .returning(move |_| Ok(id.clone()));
+
+        let use_case = CreateUser::new(&repository, &identifier);
+        let response = use_case.execute(request).await.unwrap();
+        assert_eq!(response.id, id);
+    }
+
+    #[tokio::test]
+    async fn test_create_new_user_repository_error() {
+        let username = "username".to_string();
+        let password = "password".to_string();
+        let request = Request { username, password };
+
+        let id = UserId::new_v4();
+        let mut identifier = MockIdentifier::new();
+        identifier
+            .expect_new_id()
+            .times(1)
+            .returning(move || Ok(id.clone()));
+
+        let mut repository = MockRepository::new();
+        repository
+            .expect_create()
+            .times(1)
+            .returning(move |_| Err(UserRepositoryError::ConnectionError));
+
+        let use_case = CreateUser::new(&repository, &identifier);
+        let response = use_case.execute(request).await;
+        assert!(response.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_create_new_user_identifier_error() {
+        let username = "username".to_string();
+        let password = "password".to_string();
+        let request = Request { username, password };
+
+        let mut identifier = MockIdentifier::new();
+        identifier
+            .expect_new_id()
+            .times(1)
+            .returning(move || Err(NewIdError));
+
+        let repository = MockRepository::new();
+
+        let use_case = CreateUser::new(&repository, &identifier);
+        let response = use_case.execute(request).await;
+        assert!(response.is_err());
     }
 }
