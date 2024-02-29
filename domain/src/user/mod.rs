@@ -1,7 +1,7 @@
 pub mod value_objects;
 
 use crate::common::{DomainError, Result};
-pub use value_objects::{Email, Password, Username};
+pub use value_objects::{Email, Password, UserId, Username};
 
 #[derive(Debug, Clone)]
 pub struct User {

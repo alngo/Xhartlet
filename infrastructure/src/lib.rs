@@ -1,3 +1,3 @@
 pub mod api;
-pub mod database;
+pub mod persistence;
 pub mod presenter;
