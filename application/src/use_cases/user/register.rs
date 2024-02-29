@@ -75,8 +75,7 @@ where
 
     async fn execute(&self, request: Self::Request) -> Result<Self::Response, ApplicationError> {
         let mut user = User::new(request.email, request.username, request.password)?;
-        let find = self.gateway.find_by_email(user.email.clone()).await?;
-        if find.is_some() {
+        if self.gateway.is_email_taken(&user.email).await? {
             return Err(ApplicationError {
                 message: "Email already exists".to_string(),
             });
@@ -89,6 +88,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use xhartlet_domain::user::UserId;
+
     use super::*;
     use crate::interfaces::{common::cryptography::MockCryptography, gateways::user::MockGateway};
 
@@ -104,11 +105,14 @@ mod tests {
         };
 
         let mut gateway = MockGateway::new();
-        gateway.expect_create().times(1).returning(move |_| Ok(()));
         gateway
-            .expect_find_by_email()
+            .expect_create()
             .times(1)
-            .returning(move |_| Ok(None));
+            .returning(move |_| Ok(UserId::new_v4()));
+        gateway
+            .expect_is_email_taken()
+            .times(1)
+            .returning(move |_| Ok(false));
 
         let mut cryptography = MockCryptography::new();
         cryptography
@@ -132,20 +136,16 @@ mod tests {
             password,
         };
 
-        let user = User::new(
-            "a@valid.email".to_string(),
-            "user".to_string(),
-            Password("password".to_string()),
-        )
-        .unwrap();
-
         let mut gateway = MockGateway::new();
         let cryptography = MockCryptography::new();
-        gateway.expect_create().times(0).returning(move |_| Ok(()));
         gateway
-            .expect_find_by_email()
+            .expect_create()
+            .times(0)
+            .returning(move |_| Ok(UserId::new_v4()));
+        gateway
+            .expect_is_email_taken()
             .times(1)
-            .returning(move |_| Ok(Some(user.clone())));
+            .returning(move |_| Ok(true));
 
         let use_case = Register::new(&gateway, &cryptography);
         let response = use_case.execute(request).await;
@@ -164,11 +164,14 @@ mod tests {
         };
 
         let mut gateway = MockGateway::new();
-        gateway.expect_create().times(0).returning(move |_| Ok(()));
         gateway
-            .expect_find_by_email()
+            .expect_create()
+            .times(0)
+            .returning(move |_| Ok(UserId::new_v4()));
+        gateway
+            .expect_is_email_taken()
             .times(1)
-            .returning(move |_| Ok(None));
+            .returning(move |_| Ok(false));
 
         let mut cryptography = MockCryptography::new();
         cryptography
