@@ -7,8 +7,8 @@ use xhartlet_application::{
 };
 use xhartlet_domain::user::Password;
 
-use crate::model::user;
-use crate::presenter::Present;
+use crate::presenter::model::user;
+use crate::presenter::presenter::Present;
 
 pub struct Controller<'g, 'p, 'c, G, P, C> {
     pub gateway: &'g G,

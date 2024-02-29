@@ -1,8 +1,3 @@
-pub mod cli;
-
-pub trait Present<D> {
-    /// View model
-    type ViewModel;
-    /// Present the given data `D`
-    fn present(&self, data: D) -> Self::ViewModel;
-}
+pub mod controller;
+pub mod model;
+pub mod presenter;

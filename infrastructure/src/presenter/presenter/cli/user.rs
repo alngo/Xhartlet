@@ -1,4 +1,4 @@
-use crate::{model::user::register::Result, presenter::Present};
+use crate::presenter::{model::user::register::Result, presenter::Present};
 
 #[derive(Debug, Default)]
 pub struct Presenter;
