@@ -1,0 +1,13 @@
+[package]
+name = "xhartlet-infrastructure"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+xhartlet-domain = "0.1.0"
+xhartlet-application = "0.1.0"
+async-trait = "0.1.77"
+mockall = "0.12.1"
+tokio = { version = "1.36.0", features = ["full"] }
