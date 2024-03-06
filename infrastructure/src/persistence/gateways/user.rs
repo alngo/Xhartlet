@@ -63,7 +63,8 @@ mod tests {
             "a@valid.email".to_string(),
             "username".to_string(),
             Password("password".to_string()),
-        ).unwrap();
+        )
+        .unwrap();
         let id = UserId::new_v4();
         let mut repository = MockRepository::new();
         repository
@@ -83,11 +84,16 @@ mod tests {
         repository
             .expect_read_by_email()
             .times(1)
-            .returning(move |_| Ok(Some(User::new(
-                "a@valid.email".to_string(),
-                "username".to_string(),
-                Password("password".to_string()),
-            ).unwrap())));
+            .returning(move |_| {
+                Ok(Some(
+                    User::new(
+                        "a@valid.email".to_string(),
+                        "username".to_string(),
+                        Password("password".to_string()),
+                    )
+                    .unwrap(),
+                ))
+            });
         let gateway = Gateway::new(&repository);
         let response = gateway.is_email_taken(&email).await;
         assert!(response.is_ok());

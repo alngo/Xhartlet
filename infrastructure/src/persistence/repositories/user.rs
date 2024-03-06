@@ -14,6 +14,6 @@ use mockall::automock;
 pub trait Repository {
     async fn create(&self, user: &User) -> Result<Option<UserId>, Error>;
     async fn read_by_email(&self, email: &Email) -> Result<Option<User>, Error>;
-    async fn update(&self, user: &User) -> Result<Option<User>, Error>;
-    async fn delete(&self, id: i32) -> Result<(), Error>;
+    async fn update(&self, id: UserId, user: &User) -> Result<Option<UserId>, Error>;
+    async fn delete(&self, id: UserId) -> Result<(), Error>;
 }

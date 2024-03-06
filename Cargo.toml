@@ -9,20 +9,22 @@ publish = false
 name = "xhartlet-cli"
 path = "src/bin/cli.rs"
 
+[dependencies]
+xhartlet-infrastructure = "0.1.0"
+
 [workspace]
 members = [
  "domain",
  "application",
- "infrastructure"
+ "infrastructure",
+ "framework"
 ]
-
-[dependencies]
-xhartlet-infrastructure = "0.1.0"
 
 [patch.crates-io]
 xhartlet-domain         = { path = "domain"         }
 xhartlet-application    = { path = "application"    }
 xhartlet-infrastructure = { path = "infrastructure" }
+xhartlet-framework      = { path = "framework"      }
 
 [profile.release]
 lto = true
