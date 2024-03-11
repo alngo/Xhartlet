@@ -1,5 +1,3 @@
-pub mod cli;
-
 pub trait Present<D> {
     /// View model
     type ViewModel;

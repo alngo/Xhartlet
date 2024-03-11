@@ -1,14 +1,14 @@
 use xhartlet_application::{
-    interfaces::{
-        common::{cryptography::Cryptography, use_case::UseCase},
-        gateways::user::Gateway,
+    interfaces::common::{cryptography::Cryptography, use_case::UseCase},
+    use_cases::user::{
+        gateway::Gateway,
+        register::{Register, Request},
     },
-    use_cases::user::register::{Register, Request},
 };
 use xhartlet_domain::user::Password;
 
-use crate::presenter::model::user;
-use crate::presenter::presenter::Present;
+use super::model;
+use crate::interfaces::common::present::Present;
 
 pub struct Controller<'g, 'p, 'c, G, P, C> {
     pub gateway: &'g G,
@@ -20,7 +20,7 @@ impl<'g, 'p, 'c, G, P, C> Controller<'g, 'p, 'c, G, P, C>
 where
     G: Gateway,
     C: Cryptography,
-    P: Present<user::register::Result>,
+    P: Present<model::register::Result>,
 {
     pub fn new(gateway: &'g G, cryptography: &'c C, presenter: &'p P) -> Self {
         Self {

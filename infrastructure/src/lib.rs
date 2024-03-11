@@ -1,3 +1,2 @@
-pub mod api;
-pub mod persistence;
-pub mod presenter;
+pub mod interfaces;
+pub mod user;
