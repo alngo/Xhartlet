@@ -1,3 +1,5 @@
+use xhartlet_framework::ui::cli;
+
 pub fn main() {
-    println!("Hello xhartlet");
+    cli::run();
 }

@@ -10,7 +10,7 @@ name = "xhartlet-cli"
 path = "src/bin/cli.rs"
 
 [dependencies]
-xhartlet-infrastructure = "0.1.0"
+xhartlet-framework = "0.1.0"
 
 [workspace]
 members = [

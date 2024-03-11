@@ -10,3 +10,4 @@ xhartlet-infrastructure = "0.1.0"
 xhartlet-domain = "0.1.0"
 async-trait = "0.1.77"
 tokio = { version = "1.36.0", features = ["full"] }
+clap = { version = "4.5.2", features = ["derive"] }
