@@ -3,12 +3,12 @@ use xhartlet_domain::user::value_objects::{Email, Password, Username};
 use xhartlet_domain::user::User;
 use xhartlet_domain::DomainError;
 
+use super::gateway::{Error as UserGatewayError, Gateway};
 use crate::interfaces::common::{
     cryptography::{Cryptography, CryptographyError},
     error::ApplicationError,
     use_case::UseCase,
 };
-use crate::interfaces::gateways::user::{Error as UserGatewayError, Gateway};
 
 #[derive(Debug, Clone)]
 pub struct Request {

@@ -1,6 +1,6 @@
-use crate::persistence::repositories::user::{Error as RepositoryError, Repository};
+use super::repository::{Error as RepositoryError, Repository};
 use async_trait::async_trait;
-use xhartlet_application::interfaces::gateways::user::{
+use xhartlet_application::use_cases::user::gateway::{
     Error as GatewayError, Gateway as UserGateway,
 };
 use xhartlet_domain::user::{Email, User, UserId};
@@ -55,7 +55,7 @@ mod tests {
     use xhartlet_domain::user::UserId;
 
     use super::*;
-    use crate::persistence::repositories::user::MockRepository;
+    use crate::user::repository::MockRepository;
 
     #[tokio::test]
     async fn test_create() {
