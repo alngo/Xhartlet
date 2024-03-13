@@ -11,6 +11,7 @@ struct Args {
 
 #[derive(Subcommand, Debug, Clone)]
 enum Commands {
+    /// Exit the program
     Exit,
 }
 
@@ -25,8 +26,9 @@ fn read_from_stdin() -> String {
 pub fn run() {
     loop {
         let input = read_from_stdin();
+        let command = String::from("xhartlet ") + &input;
 
-        match Args::try_parse_from(input.split_whitespace().into_iter()) {
+        match Args::try_parse_from(command.split_whitespace().into_iter()) {
             Ok(args) => match args.cmd {
                 Commands::Exit => {
                     println!("Exiting...");
