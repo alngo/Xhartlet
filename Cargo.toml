@@ -16,14 +16,14 @@ xhartlet-framework = "0.1.0"
 members = [
  "domain",
  "application",
- "infrastructure",
- "framework"
+ "interface",
+ "framework",
 ]
 
 [patch.crates-io]
 xhartlet-domain         = { path = "domain"         }
 xhartlet-application    = { path = "application"    }
-xhartlet-infrastructure = { path = "infrastructure" }
+xhartlet-interface      = { path = "interface"      }
 xhartlet-framework      = { path = "framework"      }
 
 [profile.release]

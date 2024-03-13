@@ -1,5 +1,5 @@
 pub mod register {
-    use xhartlet_application::interfaces::common::error::ApplicationError;
+    use xhartlet_application::common::error::ApplicationError;
     use xhartlet_application::use_cases::user::register as uc;
 
     pub type Error = ApplicationError;

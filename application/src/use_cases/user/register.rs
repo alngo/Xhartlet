@@ -4,7 +4,7 @@ use xhartlet_domain::user::User;
 use xhartlet_domain::DomainError;
 
 use super::gateway::{Error as UserGatewayError, Gateway};
-use crate::interfaces::common::{
+use crate::common::{
     cryptography::{Cryptography, CryptographyError},
     error::ApplicationError,
     use_case::UseCase,
@@ -91,7 +91,8 @@ mod tests {
     use xhartlet_domain::user::UserId;
 
     use super::*;
-    use crate::interfaces::{common::cryptography::MockCryptography, gateways::user::MockGateway};
+    use crate::common::cryptography::MockCryptography;
+    use crate::use_cases::user::gateway::MockGateway;
 
     #[tokio::test]
     async fn test_register() {
