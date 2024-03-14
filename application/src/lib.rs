@@ -1,2 +1,2 @@
-pub mod interfaces;
+pub mod common;
 pub mod use_cases;
