@@ -1,43 +1,62 @@
-use std::io;
+use std::io::Write;
 
 use clap::{Parser, Subcommand};
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
+#[derive(Debug, Parser)]
+#[command(multicall = true)]
+struct Cli {
     #[command(subcommand)]
-    cmd: Commands,
+    command: Commands,
 }
 
-#[derive(Subcommand, Debug, Clone)]
+#[derive(Debug, Subcommand)]
 enum Commands {
     /// Exit the program
     Exit,
 }
 
-fn read_from_stdin() -> String {
-    let mut buf = String::new();
-    io::stdin()
-        .read_line(&mut buf)
-        .expect("Failed to read line");
-    buf.trim().to_owned()
-}
-
-pub fn run() {
+pub fn run() -> Result<(), String> {
     loop {
-        let input = read_from_stdin();
-        let command = String::from("xhartlet ") + &input;
+        let line = readline()?;
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
 
-        match Args::try_parse_from(command.split_whitespace().into_iter()) {
-            Ok(args) => match args.cmd {
-                Commands::Exit => {
-                    println!("Exiting...");
+        match respond(line) {
+            Ok(quit) => {
+                if quit {
                     break;
                 }
-            },
-            Err(e) => {
-                println!("{}", e);
+            }
+            Err(err) => {
+                write!(std::io::stdout(), "{err}").map_err(|e| e.to_string())?;
+                std::io::stdout().flush().map_err(|e| e.to_string())?;
             }
         }
     }
+
+    Ok(())
+}
+
+fn respond(line: &str) -> Result<bool, String> {
+    let args = shlex::split(line).ok_or("error: Invalid quoting")?;
+    let cli = Cli::try_parse_from(args).map_err(|e| e.to_string())?;
+    match cli.command {
+        Commands::Exit => {
+            write!(std::io::stdout(), "Exiting ...\n").map_err(|e| e.to_string())?;
+            std::io::stdout().flush().map_err(|e| e.to_string())?;
+            return Ok(true);
+        }
+    }
+}
+
+fn readline() -> Result<String, String> {
+    write!(std::io::stdout(), "$ ").map_err(|e| e.to_string())?;
+    std::io::stdout().flush().map_err(|e| e.to_string())?;
+    let mut buffer = String::new();
+    std::io::stdin()
+        .read_line(&mut buffer)
+        .map_err(|e| e.to_string())?;
+    Ok(buffer)
 }
