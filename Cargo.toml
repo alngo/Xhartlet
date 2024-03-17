@@ -10,21 +10,25 @@ name = "xhartlet-cli"
 path = "src/bin/cli.rs"
 
 [dependencies]
-xhartlet-framework = "0.1.0"
+xhartlet-ui = "0.1.0"
 
 [workspace]
 members = [
  "domain",
  "application",
- "interface",
- "framework",
+ "adapters",
+ "database",
+ "ui",
+ "web",
 ]
 
 [patch.crates-io]
 xhartlet-domain         = { path = "domain"         }
 xhartlet-application    = { path = "application"    }
-xhartlet-interface      = { path = "interface"      }
-xhartlet-framework      = { path = "framework"      }
+xhartlet-adapters       = { path = "adapters"       }
+xhartlet-database       = { path = "database"       }
+xhartlet-ui             = { path = "ui"             }
+xhartlet-web            = { path = "web"            }
 
 [profile.release]
 lto = true
