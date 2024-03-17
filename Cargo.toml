@@ -19,7 +19,6 @@ members = [
  "adapters",
  "database",
  "ui",
- "web",
 ]
 
 [patch.crates-io]
@@ -28,7 +27,6 @@ xhartlet-application    = { path = "application"    }
 xhartlet-adapters       = { path = "adapters"       }
 xhartlet-database       = { path = "database"       }
 xhartlet-ui             = { path = "ui"             }
-xhartlet-web            = { path = "web"            }
 
 [profile.release]
 lto = true

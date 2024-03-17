@@ -1,3 +1,3 @@
-pub mod cryptography;
 pub mod error;
-pub mod use_case;
+pub mod abstract_use_case;
+pub mod abstract_cryptography;

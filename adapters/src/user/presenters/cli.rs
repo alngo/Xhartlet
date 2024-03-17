@@ -1,4 +1,4 @@
-use crate::common::present::Present;
+use crate::common::abstract_present::Present;
 use crate::user::model::register::Result;
 
 #[derive(Debug, Default)]

@@ -44,9 +44,9 @@ fn respond(line: &str) -> Result<bool, String> {
     let cli = Cli::try_parse_from(args).map_err(|e| e.to_string())?;
     match cli.command {
         Commands::Exit => {
-            write!(std::io::stdout(), "Exiting ...\n").map_err(|e| e.to_string())?;
+            writeln!(std::io::stdout(), "Exiting ...").map_err(|e| e.to_string())?;
             std::io::stdout().flush().map_err(|e| e.to_string())?;
-            return Ok(true);
+            Ok(true)
         }
     }
 }
