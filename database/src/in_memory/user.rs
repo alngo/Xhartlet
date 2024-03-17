@@ -1,8 +1,8 @@
 use std::{collections::HashMap, sync::RwLock};
 
 use async_trait::async_trait;
+use xhartlet_adapters::user::abstract_repository::{Error, Repository as UserRepository};
 use xhartlet_domain::user::{Email, User, UserId};
-use xhartlet_interface::user::repository::{Error, Repository as UserRepository};
 
 #[derive(Debug, Default)]
 struct Repository {

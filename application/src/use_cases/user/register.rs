@@ -3,11 +3,11 @@ use xhartlet_domain::user::value_objects::{Email, Password, Username};
 use xhartlet_domain::user::User;
 use xhartlet_domain::DomainError;
 
-use super::gateway::{Error as UserGatewayError, Gateway};
+use super::abstract_gateway::{Error as UserGatewayError, Gateway};
 use crate::common::{
-    cryptography::{Cryptography, CryptographyError},
+    abstract_cryptography::{Cryptography, CryptographyError},
     error::ApplicationError,
-    use_case::UseCase,
+    abstract_use_case::UseCase,
 };
 
 #[derive(Debug, Clone)]
@@ -91,8 +91,8 @@ mod tests {
     use xhartlet_domain::user::UserId;
 
     use super::*;
-    use crate::common::cryptography::MockCryptography;
-    use crate::use_cases::user::gateway::MockGateway;
+    use crate::common::abstract_cryptography::MockCryptography;
+    use crate::use_cases::user::abstract_gateway::MockGateway;
 
     #[tokio::test]
     async fn test_register() {

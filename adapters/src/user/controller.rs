@@ -1,14 +1,14 @@
 use xhartlet_application::{
-    common::{cryptography::Cryptography, use_case::UseCase},
+    common::{abstract_cryptography::Cryptography, abstract_use_case::UseCase},
     use_cases::user::{
-        gateway::Gateway,
+        abstract_gateway::Gateway,
         register::{Register, Request},
     },
 };
 use xhartlet_domain::user::Password;
 
 use super::model;
-use crate::common::present::Present;
+use crate::common::abstract_present::Present;
 
 pub struct Controller<'g, 'p, 'c, G, P, C> {
     pub gateway: &'g G,
