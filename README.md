@@ -6,8 +6,8 @@
 
 ## Overview
 
-[![Rust](https://github.com/alngo/Xhartlet/actions/workflows/tests.yml/badge.svg)](https://github.com/alngo/Xhartlet/actions/workflows/tests.yml)
-[![Rust](https://github.com/alngo/Xhartlet/actions/workflows/tests.yml/badge.svg)](https://github.com/alngo/Xhartlet/actions/workflows/coverage.yml)
+[![Unit tests](https://github.com/alngo/Xhartlet/actions/workflows/tests.yml/badge.svg)](https://github.com/alngo/Xhartlet/actions/workflows/tests.yml)
+[![Coverage](https://github.com/alngo/Xhartlet/actions/workflows/coverage.yml/badge.svg)](https://github.com/alngo/Xhartlet/actions/workflows/coverage.yml)
 
 This project is a pet project aimed at learning Rust, WebAssembly (Wasm), and applying Clean Architecture principles to build a trading application. The goal is to create a modular and maintainable system for simulating and executing trades while exploring the performance benefits of Rust and the portability of WebAssembly.
 
