@@ -21,7 +21,7 @@ async fn handle_request(
 
 #[tokio::main(flavor = "current_thread")]
 pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let addr = SocketAddr::from(([127, 0, 0, 0], 8001));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
 
     let listener = TcpListener::bind(&addr).await?;
     println!("Listening on: {}", addr);
