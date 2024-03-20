@@ -6,8 +6,8 @@ use xhartlet_domain::DomainError;
 use super::abstract_gateway::{Error as UserGatewayError, Gateway};
 use crate::common::{
     abstract_cryptography::{Cryptography, CryptographyError},
-    error::ApplicationError,
     abstract_use_case::UseCase,
+    error::ApplicationError,
 };
 
 #[derive(Debug, Clone)]
