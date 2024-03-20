@@ -9,8 +9,13 @@ publish = false
 name = "xhartlet-cli"
 path = "src/bin/cli.rs"
 
+[[bin]]
+name = "xhartlet-server"
+path = "src/bin/server.rs"
+
 [dependencies]
-xhartlet-ui = "0.1.0"
+xhartlet-ui  = "0.1.0"
+xhartlet-web = "0.1.0"
 
 [workspace]
 members = [
@@ -19,6 +24,7 @@ members = [
  "adapters",
  "database",
  "ui",
+ "web",
 ]
 
 [patch.crates-io]
@@ -27,6 +33,7 @@ xhartlet-application    = { path = "application"    }
 xhartlet-adapters       = { path = "adapters"       }
 xhartlet-database       = { path = "database"       }
 xhartlet-ui             = { path = "ui"             }
+xhartlet-web            = { path = "web"            }
 
 [profile.release]
 lto = true
