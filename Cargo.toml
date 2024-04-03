@@ -10,12 +10,13 @@ name = "xhartlet-cli"
 path = "src/bin/cli.rs"
 
 [[bin]]
-name = "xhartlet-server"
-path = "src/bin/server.rs"
+name = "xhartlet-api"
+path = "src/bin/api.rs"
 
 [dependencies]
 xhartlet-ui  = "0.1.0"
 xhartlet-web = "0.1.0"
+tokio = { version = "1.37.0", features = ["full"] }
 
 [workspace]
 members = [
