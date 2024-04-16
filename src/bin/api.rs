@@ -2,5 +2,6 @@ use xhartlet_web::api;
 
 #[tokio::main]
 async fn main() {
-    api::run().
+    let instance = api::run("127.0.0.1").await;
+    instance.unwrap().await.unwrap();
 }
