@@ -1,8 +1,10 @@
 mod health_check;
+mod register;
 
 use health_check::health_check;
+use register::register;
 
-use axum::{http::StatusCode, response::IntoResponse, routing::get, serve::Serve, Router};
+use axum::{http::StatusCode, response::IntoResponse, routing::{get, post}, serve::Serve, Router};
 use tokio::net::TcpListener;
 
 pub async fn run(host: impl Into<String>) -> Result<Serve<Router, Router>, std::io::Error> {
@@ -14,5 +16,7 @@ pub async fn run(host: impl Into<String>) -> Result<Serve<Router, Router>, std::
 }
 
 pub fn app() -> Router {
-    Router::new().route("/health_check", get(health_check))
+    Router::new()
+        .route("/health_check", get(health_check))
+        .route("/register", post(register))
 }
