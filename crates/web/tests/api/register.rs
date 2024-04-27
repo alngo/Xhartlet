@@ -21,9 +21,10 @@ async fn test_register_valid_form() {
         .await
         .unwrap();
 
+    // Assert
     assert!(response.status().is_success());
-    let id: String = response.text().await.unwrap();
-    assert_eq!(id, "0");
+    let msg: String = response.text().await.unwrap();
+    assert_eq!(msg, "User registered successfully!");
 }
 
 #[tokio::test]
@@ -33,18 +34,27 @@ async fn test_register_invalid_form() {
     let client = reqwest::Client::new();
 
     let test_cases = vec![
-        (json!({
-            "username": "test",
-            "password": "test"
-        }), "missing field `email`"),
-        (json!({
-            "email": "test@test.com",
-            "password": "test"
-        }), "missing field `username`"),
-        (json!({
-            "email": "test@test.com",
-            "username": "test"
-        }), "missing field `password`"),
+        (
+            json!({
+                "username": "test",
+                "password": "test"
+            }),
+            "missing field `email`",
+        ),
+        (
+            json!({
+                "email": "test@test.com",
+                "password": "test"
+            }),
+            "missing field `username`",
+        ),
+        (
+            json!({
+                "email": "test@test.com",
+                "username": "test"
+            }),
+            "missing field `password`",
+        ),
     ];
 
     for (body, error_message) in test_cases {

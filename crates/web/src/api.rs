@@ -4,7 +4,13 @@ mod register;
 use health_check::health_check;
 use register::register;
 
-use axum::{http::StatusCode, response::IntoResponse, routing::{get, post}, serve::Serve, Router};
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    serve::Serve,
+    Router,
+};
 use tokio::net::TcpListener;
 
 pub async fn run(host: impl Into<String>) -> Result<Serve<Router, Router>, std::io::Error> {

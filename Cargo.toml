@@ -20,21 +20,21 @@ tokio = { version = "1.37.0", features = ["full"] }
 
 [workspace]
 members = [
- "domain",
- "application",
- "adapters",
- "database",
- "ui",
- "web",
+ "crates/domain",
+ "crates/application",
+ "crates/adapters",
+ "crates/database",
+ "crates/ui",
+ "crates/web",
 ]
 
 [patch.crates-io]
-xhartlet-domain         = { path = "domain"         }
-xhartlet-application    = { path = "application"    }
-xhartlet-adapters       = { path = "adapters"       }
-xhartlet-database       = { path = "database"       }
-xhartlet-ui             = { path = "ui"             }
-xhartlet-web            = { path = "web"            }
+xhartlet-domain         = { path = "crates/domain"         }
+xhartlet-application    = { path = "crates/application"    }
+xhartlet-adapters       = { path = "crates/adapters"       }
+xhartlet-database       = { path = "crates/database"       }
+xhartlet-ui             = { path = "crates/ui"             }
+xhartlet-web            = { path = "crates/web"            }
 
 [profile.release]
 lto = true
