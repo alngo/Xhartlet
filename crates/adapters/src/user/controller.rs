@@ -1,7 +1,7 @@
 use xhartlet_application::{
     common::{abstract_cryptography::Cryptography, abstract_use_case::UseCase},
     use_cases::user::{
-        abstract_gateway::Gateway,
+        abstract_repository::Repository,
         register::{Register, Request},
     },
 };
@@ -10,25 +10,25 @@ use xhartlet_domain::user::Password;
 use super::model;
 use crate::common::abstract_present::Present;
 
-pub struct Controller<'g, 'p, 'c, G, P, C> {
-    pub gateway: &'g G,
+pub struct Controller<'r, 'p, 'c, R, P, C> {
+    pub repository: &'r R,
     pub cryptography: &'c C,
     pub presenter: &'p P,
 }
 
-impl<'g, 'p, 'c, G, P, C> Controller<'g, 'p, 'c, G, P, C>
+impl<'r, 'p, 'c, R, P, C> Controller<'r, 'p, 'c, R, P, C>
 where
-    G: Gateway,
+    R: Repository,
     C: Cryptography,
     P: Present<model::register::Result>,
 {
-    pub fn new(gateway: &'g G, cryptography: &'c C, presenter: &'p P) -> Self {
+    pub fn new(repository: &'r R, cryptography: &'c C, presenter: &'p P) -> Self {
         Self {
-            gateway,
+            repository,
             cryptography,
             presenter,
         }
-    }
+    g
 
     pub async fn register(&self, email: &str, name: &str, password: &str) {
         let request = Request {
@@ -36,7 +36,7 @@ where
             username: name.to_string(),
             password: Password(password.to_string()),
         };
-        let interactor = Register::new(self.gateway, self.cryptography);
+        let interactor = Register::new(self.repository, self.cryptography);
         let response = interactor.execute(request).await;
         self.presenter.present(response);
     }

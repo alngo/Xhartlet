@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::RwLock};
 
 use async_trait::async_trait;
-use xhartlet_adapters::user::abstract_repository::{Error, Repository as UserRepository};
+use xhartlet_application::use_cases::user::abstract_repository::{Repository as UserRepository, Error};
 use xhartlet_domain::user::{Email, User, UserId};
 
 #[derive(Debug, Default)]
@@ -32,6 +32,14 @@ impl UserRepository for Repository {
             .find(|u| u.email == *email)
             .cloned();
         Ok(res)
+    }
+
+    async fn is_email_taken(&self, email: &Email) -> Result<bool, Error> {
+        let response = self.read_by_email(email).await?;
+        match response {
+            Some(_) => Ok(true),
+            None => Ok(false),
+        }
     }
 
     async fn update(&self, id: UserId, user: &User) -> Result<Option<UserId>, Error> {

@@ -1,2 +1,2 @@
-pub mod abstract_gateway;
+pub mod abstract_repository;
 pub mod register;

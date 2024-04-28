@@ -3,7 +3,7 @@ use xhartlet_domain::user::value_objects::{Email, Password, Username};
 use xhartlet_domain::user::User;
 use xhartlet_domain::DomainError;
 
-use super::abstract_gateway::{Error as UserGatewayError, Gateway};
+use super::abstract_repository::{Error as UserRepositoryError, Repository};
 use crate::common::{
     abstract_cryptography::{Cryptography, CryptographyError},
     abstract_use_case::UseCase,
@@ -22,8 +22,8 @@ pub struct Response {
     pub user: User,
 }
 
-impl From<UserGatewayError> for ApplicationError {
-    fn from(e: UserGatewayError) -> Self {
+impl From<UserRepositoryError> for ApplicationError {
+    fn from(e: UserRepositoryError) -> Self {
         ApplicationError {
             message: format!("Create user error: {:?}", e),
         }
@@ -46,28 +46,28 @@ impl From<CryptographyError> for ApplicationError {
     }
 }
 
-pub struct Register<'g, 'c, G, C> {
-    gateway: &'g G,
+pub struct Register<'r, 'c, R, C> {
+    repository: &'r R,
     cryptography: &'c C,
 }
 
-impl<'g, 'c, G, C> Register<'g, 'c, G, C>
+impl<'r, 'c, R, C> Register<'r, 'c, R, C>
 where
-    G: Gateway,
+    R: Repository,
     C: Cryptography,
 {
-    pub fn new(gateway: &'g G, cryptography: &'c C) -> Self {
+    pub fn new(repository: &'r R, cryptography: &'c C) -> Self {
         Register {
-            gateway,
+            repository,
             cryptography,
         }
     }
 }
 
 #[async_trait(?Send)]
-impl<'g, 'c, G, C> UseCase for Register<'g, 'c, G, C>
+impl<'r, 'c, R, C> UseCase for Register<'r, 'c, R, C>
 where
-    G: Gateway,
+    R: Repository,
     C: Cryptography,
 {
     type Request = Request;
@@ -75,13 +75,13 @@ where
 
     async fn execute(&self, request: Self::Request) -> Result<Self::Response, ApplicationError> {
         let mut user = User::new(request.email, request.username, request.password)?;
-        if self.gateway.is_email_taken(&user.email).await? {
+        if self.repository.is_email_taken(&user.email).await? {
             return Err(ApplicationError {
                 message: "Email already exists".to_string(),
             });
         }
         user.password = Password(self.cryptography.hash(&user.password.0).await?);
-        self.gateway.create(&user).await?;
+        self.repository.create(&user).await?;
         Ok(Response { user })
     }
 }
@@ -92,7 +92,7 @@ mod tests {
 
     use super::*;
     use crate::common::abstract_cryptography::MockCryptography;
-    use crate::use_cases::user::abstract_gateway::MockGateway;
+    use crate::use_cases::user::abstract_repository::MockRepository;
 
     #[tokio::test]
     async fn test_register() {
@@ -105,12 +105,12 @@ mod tests {
             password,
         };
 
-        let mut gateway = MockGateway::new();
-        gateway
+        let mut repository = MockRepository::new();
+        repository
             .expect_create()
             .times(1)
-            .returning(move |_| Ok(UserId::new_v4()));
-        gateway
+            .returning(move |_| Ok(Some(UserId::new_v4())));
+        repository
             .expect_is_email_taken()
             .times(1)
             .returning(move |_| Ok(false));
@@ -121,7 +121,7 @@ mod tests {
             .times(1)
             .returning(move |_| Ok("hashed".to_string()));
 
-        let use_case = Register::new(&gateway, &cryptography);
+        let use_case = Register::new(&repository, &cryptography);
         let response = use_case.execute(request).await;
         assert!(response.is_ok());
     }
@@ -137,18 +137,18 @@ mod tests {
             password,
         };
 
-        let mut gateway = MockGateway::new();
+        let mut repository = MockRepository::new();
         let cryptography = MockCryptography::new();
-        gateway
+        repository
             .expect_create()
             .times(0)
-            .returning(move |_| Ok(UserId::new_v4()));
-        gateway
+            .returning(move |_| Ok(Some(UserId::new_v4())));
+        repository
             .expect_is_email_taken()
             .times(1)
             .returning(move |_| Ok(true));
 
-        let use_case = Register::new(&gateway, &cryptography);
+        let use_case = Register::new(&repository, &cryptography);
         let response = use_case.execute(request).await;
         assert!(response.is_err());
     }
@@ -164,12 +164,12 @@ mod tests {
             password,
         };
 
-        let mut gateway = MockGateway::new();
-        gateway
+        let mut repository = MockRepository::new();
+        repository
             .expect_create()
             .times(0)
-            .returning(move |_| Ok(UserId::new_v4()));
-        gateway
+            .returning(move |_| Ok(Some(UserId::new_v4())));
+        repository
             .expect_is_email_taken()
             .times(1)
             .returning(move |_| Ok(false));
@@ -180,7 +180,7 @@ mod tests {
             .times(1)
             .returning(move |_| Err(CryptographyError));
 
-        let use_case = Register::new(&gateway, &cryptography);
+        let use_case = Register::new(&repository, &cryptography);
         let response = use_case.execute(request).await;
         assert!(response.is_err());
     }
