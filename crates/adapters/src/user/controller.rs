@@ -28,7 +28,7 @@ where
             cryptography,
             presenter,
         }
-    g
+    }
 
     pub async fn register(&self, email: &str, name: &str, password: &str) {
         let request = Request {
