@@ -22,7 +22,6 @@ pub fn run() -> Result<(), String> {
         if line.is_empty() {
             continue;
         }
-
         match respond(line) {
             Ok(quit) => {
                 if quit {

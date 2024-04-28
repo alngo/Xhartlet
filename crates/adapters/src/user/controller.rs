@@ -41,3 +41,11 @@ where
         self.presenter.present(response);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[tokio::test]
+    async fn test_register() {
+    }
+}
+

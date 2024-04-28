@@ -48,6 +48,7 @@ impl UserRepository for Repository {
         self.users.write().unwrap().insert(id, user.clone());
         Ok(Some(id))
     }
+
     async fn delete(&self, id: UserId) -> Result<(), Error> {
         self.users.write().unwrap().remove(&id);
         Ok(())

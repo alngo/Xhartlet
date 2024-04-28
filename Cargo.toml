@@ -23,7 +23,6 @@ members = [
  "crates/domain",
  "crates/application",
  "crates/adapters",
- "crates/database",
  "crates/ui",
  "crates/web",
 ]
@@ -32,7 +31,6 @@ members = [
 xhartlet-domain         = { path = "crates/domain"         }
 xhartlet-application    = { path = "crates/application"    }
 xhartlet-adapters       = { path = "crates/adapters"       }
-xhartlet-database       = { path = "crates/database"       }
 xhartlet-ui             = { path = "crates/ui"             }
 xhartlet-web            = { path = "crates/web"            }
 
